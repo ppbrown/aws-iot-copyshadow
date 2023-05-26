@@ -1,0 +1,25 @@
+---
+# This is a convenience config file for iot.py
+# If you are not using Greengrass to initialize your IoT cred, etc.,
+# copy this file to
+#   /greengrass/v2/config/effectiveConfig.yaml
+# (Or edit the code to use your preferred path(s) )
+# 
+# NOTE1: You will need to manually set the value for
+# iotDataEndpoint
+# Find the appropriate value for you via IotCore -> Settings
+# eg:
+#  https://us-west-2.console.aws.amazon.com/iot/home?region=us-west-2#/settings
+#
+# NOTE2: copy in appropriate key files to the given locations, or edit 
+# to point to where your IoT files are
+system:
+  certificateFilePath: "/greengrass/v2/thingCert.crt"
+  privateKeyPath: "/greengrass/v2/privKey.key"
+  rootCaPath: "/greengrass/v2/rootCA.pem"
+  thingName: "demo-device"
+services:
+  aws.greengrass.Nucleus:
+    configuration:
+      awsRegion: "us-west-2"
+      iotDataEndpoint: "XXXXXXXX-ats.iot.us-west-2.amazonaws.com"

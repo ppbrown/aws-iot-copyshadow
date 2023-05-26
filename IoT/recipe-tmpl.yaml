@@ -1,0 +1,16 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: NAME
+ComponentVersion: VERSION
+ComponentDescription: Make a JSON copy of DeviceShadow
+ComponentPublisher: Bolthole
+ComponentConfiguration:
+  DefaultConfiguration:
+Manifests:
+  - Platform:
+      os: linux
+    Lifecycle:
+      Install: python3 -m pip install --user -U awsiotsdk
+      Run:
+        RequiresPrivilege: true
+        Script: python3 {artifacts:path}/iotcopyshadow.py {configuration:/Audience}

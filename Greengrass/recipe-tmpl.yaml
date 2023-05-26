@@ -1,0 +1,45 @@
+---
+RecipeFormatVersion: '2020-01-25'
+ComponentName: NAME
+ComponentVersion: VERSION
+ComponentDescription: Greengrass test
+ComponentPublisher: Bolthole
+ComponentConfiguration:
+  DefaultConfiguration:
+    accessControl:
+      aws.greengrass.ShadowManager:
+        'com.bolthole.greengrasscopyshadow:shadow:1':
+          policyDescription: 'Allows access to shadows'
+          operations:
+            - 'aws.greengrass#GetThingShadow'
+            - 'aws.greengrass#UpdateThingShadow'
+            - 'aws.greengrass#DeleteThingShadow'
+          resources:
+            - $aws/things/{iot:thingName}/shadow
+            - $aws/things/{iot:thingName}/shadow/name/flippy
+        'com.bolthole.greengrasscopyshadow:shadow:2':
+          policyDescription: 'Allows access to things with shadows'
+          operations:
+            - 'aws.greengrass#ListNamedShadowsForThing'
+          resources:
+            - '{iot:thingName}'
+      aws.greengrass.ipc.pubsub:
+        'com.bolthole.greengrasscopyshadow:pubsub:1':
+          policyDescription: 'Allows access to shadow pubsub topics'
+          operations:
+            - 'aws.greengrass#SubscribeToTopic'
+          resources:
+            - $aws/things/{iot:thingName}/shadow/get/accepted
+            - $aws/things/{iot:thingName}/shadow/name/myNamedShadow/get/accepted
+  ComponentDependencies:
+    aws.greengrass.TokenExchangeService:
+    VersionRequirement: ^2.0.0
+    DependencyType: HARD
+Manifests:
+  - Platform:
+      os: linux
+    Lifecycle:
+      Install: python3 -m pip install --user -U awsiotsdk
+      Run: 
+        RequiresPrivilege: true
+        Script: python3 {artifacts:path}/main.py {configuration:/Audience}

@@ -1,0 +1,60 @@
+#
+# Just make sure that your "Thing" has in its policy,
+# at minimum something like the following:
+
+    {
+      "Action": [
+        "iot:DeleteThingShadow",
+        "iot:GetThingShadow",
+        "iot:UpdateThingShadow"
+      ],
+      "Effect": "Allow",
+      "Resource": "arn:aws:iot:*:*:thing/${iot:Connection.Thing.ThingName}"
+    },
+    {
+      "Action": "iot:Publish",
+      "Effect": "Allow",
+      "Resource": "arn:aws:iot:*:*:topic/$aws/things/${iot:Connection.Thing.ThingName}/shadow/*"
+    },
+    {
+      "Action": "iot:Subscribe",
+      "Effect": "Allow",
+      "Resource": "arn:aws:iot:*:*:topicfilter/$aws/things/${iot:Connection.Thing.ThingName}/shadow/*"
+    },
+    {
+      "Action": [
+        "iot:Receive",
+        "iot:Connect"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    },
+  }
+
+# #####  ####   #####  ###### ## ### # ### ## ### #### ##
+
+# End of code section. Explainations follow
+
+If you ARE using Greengrass for initial creation of your Things, then 
+the policy you may need to update is probably 'GreengrassV2IoTThingPolicy'
+Note this is specifically under IoT -> Security -> Policies,
+**NOT** IAM Policies
+
+The MQTT values for the "iot:xxx" actions probably deserve some explainations to
+folks new to AWS IoT.
+
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+iot:Publish and iot:Connect are related.
+iot:Subscribe and iot:Receive are related
+
+The first ones serve as initial allow/deny controls. However, the second ones
+serve as additional filters that can be more granular.
+Most people will only care about basic allow/deny; therefore, most people will be
+best served with the "*" targets I have provided above
+
+Note also that, under sane circumstances, it would be allowed to simply merge
+permissions for iot:Publish and iot:Subscribe.. but AWS decided for no good reason,
+to have each of them require DIFFERENT SYNTAX for the "resource" argument.
+("topic" vs "topicfilter")
+This means that unless you want to grant your Things global access.. 
+you cannot combine them
